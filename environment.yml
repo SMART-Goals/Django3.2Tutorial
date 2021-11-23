@@ -1,0 +1,11 @@
+name: dj32tutorial
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - django=3.2
+  - psycopg2
+  - sqlite
+  - mysql-connector-python
+  - flake8
+
