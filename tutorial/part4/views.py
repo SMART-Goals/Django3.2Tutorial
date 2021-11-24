@@ -1,43 +1,35 @@
+r"""
+polls.views module before the introduction of generic views
+"""
+
 # package imports
 from polls.models import Choice, Question
 
 # third party imports
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.views import generic
 from django.urls import reverse
 
 # standard imports
 from typing import Union
 
 
-class IndexView(generic.ListView):
-    # These two lines substitute the old call to render(), which was
-    # render(request, 'polls/index.html', {'latest_question_list': latest_question_list})
-    template_name = 'polls/index.html'
-    context_object_name = 'latest_question_list'
-
-    def get_queryset(self):
-        """Return the last five published questions, from newest to oldest."""
-        return Question.objects.order_by('-pub_date')[:5]  # to be fed to `context_object_name`
+def index(request: HttpRequest) -> HttpResponse:
+    # fetch last five questions, from newest to oldest
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    return render(request, 'polls/index.html', {'latest_question_list': latest_question_list})
 
 
-class DetailView(generic.DetailView):
-    r"""Assumed DetailView.as_view() will collect the Question.pk and the response template requires a
-     context dictionary with only one key, key 'question' whose value is a Question object.
-     """
-    model = Question
-    template_name = 'polls/detail.html'
+def detail(request: HttpRequest, question_id: int) -> HttpResponse:
+    question = get_object_or_404(Question, pk=question_id)
+    # notice question is not a string but a Question object. Function render() will call Question.__str__()
+    # and pass the result to template polls/detail.html
+    return render(request, 'polls/detail.html', {'question': question})
 
 
-class ResultsView(generic.DetailView):
-    r"""Assumed ResultsView.as_view() will collect the Question.pk and the response template requires a
-     context dictionary with only one key whose value we chose to specifically store in
-     `context_object_name`. The value associated to this key is a Question object.
-     """
-    model = Question
-    template_name = 'polls/results.html'
-    context_object_name = 'question'
+def results(request: HttpRequest, question_id: int) -> HttpResponse:
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/results.html', {'question': question})
 
 
 def vote(request: HttpRequest, question_id: int) -> Union[HttpResponse, HttpResponseRedirect]:
