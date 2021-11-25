@@ -7,5 +7,6 @@ dependencies:
   - psycopg2
   - sqlite
   - mysql-connector-python
+  - faker
   - flake8
 
