@@ -1,4 +1,5 @@
 # third party packages
+from django.contrib import admin
 from django.db import models
 from django.utils import timezone
 
@@ -14,6 +15,17 @@ class Question(models.Model):
         r"""Important because they're used in the admin pages"""
         return self.question_text
 
+    # The `admin.display` decorator endows with functionality the column assigned to display whether
+    # the question was published recently when presenting this feature of Question in the /admin/polls site.
+    # In particular, we set the title of the column to 'Published recently?' and when we click on the
+    # column header, the column items will be ordered by their `pub_date` values. Also, the option
+    # `boolean=True` will replace the return value of the function (`True` or `False`) with fancy "+"
+    # and "x" icons.
+    @admin.display(
+        boolean=True,
+        ordering='pub_date',
+        description='Published recently?',
+    )
     def was_published_recently(self) -> datetime.datetime:
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.pub_date <= now
