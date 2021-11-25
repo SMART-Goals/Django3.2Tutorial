@@ -1,3 +1,5 @@
+[PART 1](https://docs.djangoproject.com/en/3.2/intro/tutorial01/)
+
 The very first step is to "create a project", which involves running a script that generates
 the barebones set of directories and files.
 
